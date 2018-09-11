@@ -6,6 +6,8 @@
 .packages
 .pub/
 build/
-ios/.generated/
+ios/
+.generated/
 packages
 .flutter-plugins
+android/
