@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(new MyApp());
 
+final key=new GlobalKey<_InputWordsState>();
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -21,8 +23,8 @@ class MyApp extends StatelessWidget {
           ),
           body: new TabBarView(
             children: [
-              new InputWords(),
-              new Icon(Icons.text_rotation_angleup),
+              new InputWords(key:key),
+              new DrawRandom(),
             ],
             ),
             ),
@@ -33,15 +35,72 @@ class MyApp extends StatelessWidget {
   
 }
 
+class DrawRandom extends StatefulWidget{
+  
+  _DrawRandomState createState()=>new _DrawRandomState();
+ }
+
+  class _DrawRandomState extends State<DrawRandom>{
+
+  String _drawnString="";
+    @override
+    Widget build(BuildContext context) {
+      return new Scaffold(
+        body:new Center(
+          child: new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new Text(
+                "${_drawnString}",
+                textScaleFactor: 2.5,
+              ),
+            ],
+        ),
+        ),
+        floatingActionButton: new FloatingActionButton(
+          onPressed: () =>_drawRandom(),
+                    tooltip:'Draw',
+                    child:new Icon(Icons.center_focus_strong),
+                  ),
+                );
+              }
+            
+              static List<TextItem> generateRandomData() {
+                List<TextItem> items=<TextItem>[];
+                items.add(new TextItem(text:"text",isDrawn:false));
+                items.add(new TextItem(text:"Hi",isDrawn:false));
+                items.add(new TextItem(text:"Hello",isDrawn:false));
+                items.add(new TextItem(text:"Bye",isDrawn:false));
+                items.add(new TextItem(text:"Next",isDrawn:false));
+                items.add(new TextItem(text:"Previous",isDrawn:false));
+                return items;
+              }
+          
+            void _drawRandom() {
+                List<TextItem> _items=key.currentState.messages;
+                TextItem _item=(_items.where((x)=>!x.isDrawn).toList()..shuffle()).first;
+                int index=_items.indexOf(_item);
+                _item.isDrawn=true;
+                _drawnString=_item.text;
+                _items[index]=_item;
+                setState((){
+                    _drawnString=_item.text;
+                });
+            }
+
+}
+
 
 class InputWords extends StatefulWidget{
  
+ InputWords({Key key}):super(key:key);
 _InputWordsState createState() => new _InputWordsState();
 }
 
 class _InputWordsState extends State<InputWords>{
   
   final List<TextItem> _messages = <TextItem>[];
+  List<TextItem> get messages =>_messages;
   final inputController = new TextEditingController();
 
   @override
@@ -104,7 +163,8 @@ class _InputWordsState extends State<InputWords>{
   void _handleSubmitted(String text) {
     inputController.clear();
     TextItem item=new TextItem(
-      text:text
+      text:text,
+      isDrawn:false
       );
     
     setState((){
@@ -116,8 +176,9 @@ class _InputWordsState extends State<InputWords>{
 
 class TextItem extends StatelessWidget{
   
-  TextItem({this.text});
+  TextItem({this.text,this.isDrawn});
   final String text;
+  bool isDrawn;
   
   @override
   Widget build(BuildContext context) {
