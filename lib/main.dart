@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(new MyApp());
 
+final key=new GlobalKey<_InputWordsState>();
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class MyApp extends StatelessWidget {
           ),
           body: new TabBarView(
             children: [
-              new InputWords(),
+              new InputWords(key:key),
               new DrawRandom(),
             ],
             ),
@@ -34,13 +36,12 @@ class MyApp extends StatelessWidget {
 }
 
 class DrawRandom extends StatefulWidget{
- 
+  
   _DrawRandomState createState()=>new _DrawRandomState();
  }
 
   class _DrawRandomState extends State<DrawRandom>{
 
-  final List<TextItem> _items=generateRandomData();
   String _drawnString="";
     @override
     Widget build(BuildContext context) {
@@ -76,6 +77,7 @@ class DrawRandom extends StatefulWidget{
               }
           
             void _drawRandom() {
+                List<TextItem> _items=key.currentState.messages;
                 TextItem _item=(_items.where((x)=>!x.isDrawn).toList()..shuffle()).first;
                 int index=_items.indexOf(_item);
                 _item.isDrawn=true;
@@ -91,12 +93,14 @@ class DrawRandom extends StatefulWidget{
 
 class InputWords extends StatefulWidget{
  
+ InputWords({Key key}):super(key:key);
 _InputWordsState createState() => new _InputWordsState();
 }
 
 class _InputWordsState extends State<InputWords>{
   
   final List<TextItem> _messages = <TextItem>[];
+  List<TextItem> get messages =>_messages;
   final inputController = new TextEditingController();
 
   @override
