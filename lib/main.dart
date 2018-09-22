@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:random_draw/textItem.dart';
 
 void main() => runApp(new MyApp());
 
@@ -8,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Welcome to Flutter',
+      title: 'Draw Random Items',
       home: new DefaultTabController(
         length: 2,
         child: new Scaffold(
@@ -36,13 +37,15 @@ class MyApp extends StatelessWidget {
 }
 
 class DrawRandom extends StatefulWidget{
-  
+  DrawRandom(){
+  }
   _DrawRandomState createState()=>new _DrawRandomState();
  }
 
   class _DrawRandomState extends State<DrawRandom>{
 
   String _drawnString="";
+  bool isButtonEnabled=true;
     @override
     Widget build(BuildContext context) {
       return new Scaffold(
@@ -58,7 +61,7 @@ class DrawRandom extends StatefulWidget{
         ),
         ),
         floatingActionButton: new FloatingActionButton(
-          onPressed: () =>_drawRandom(),
+          onPressed: !isButtonEnabled?null: () =>_drawRandom(),
                     tooltip:'Draw',
                     child:new Icon(Icons.center_focus_strong),
                   ),
@@ -85,6 +88,7 @@ class DrawRandom extends StatefulWidget{
                 _items[index]=_item;
                 setState((){
                     _drawnString=_item.text;
+                    isButtonEnabled=_items.where((x)=>!x.isDrawn).toList().length>0?true:false;
                 });
             }
 
@@ -119,6 +123,7 @@ class _InputWordsState extends State<InputWords>{
               padding:new EdgeInsets.all(8.0),
               itemBuilder: (_,int index)=>_messages[index],
               itemCount:_messages.length,
+              //onTap: ()=>   FocusScope.of(context).requestFocus(new FocusNode()),
             ),
           ),
           new Divider(height:1.0),
@@ -145,7 +150,7 @@ class _InputWordsState extends State<InputWords>{
               controller: inputController,
               onSubmitted: _handleSubmitted,
               decoration: new InputDecoration.collapsed(
-                hintText: "Send a message"),
+                hintText: "Input Item in List"),
             ),
           ),
           new Container(
@@ -162,32 +167,16 @@ class _InputWordsState extends State<InputWords>{
 
   void _handleSubmitted(String text) {
     inputController.clear();
+    if(text!=null || text!=""){
     TextItem item=new TextItem(
-      text:text,
-      isDrawn:false
+        text:text,
+        isDrawn:false
       );
     
-    setState((){
-      _messages.insert(0, item);
-    });
+      setState((){
+        _messages.insert(0, item);
+      });
+    }
 }
 
 }
-
-class TextItem extends StatelessWidget{
-  
-  TextItem({this.text,this.isDrawn});
-  final String text;
-  bool isDrawn;
-  
-  @override
-  Widget build(BuildContext context) {
-    return new Container(
-      margin: new EdgeInsets.symmetric(vertical:10.0),
-      child: new Text(text,
-            style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),
-        ),
-      );
-  }
-  
-} 
