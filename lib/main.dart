@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:random_draw/textItem.dart';
 
 void main() => runApp(new MyApp());
 
@@ -91,7 +90,6 @@ class DrawRandom extends StatefulWidget{
                     isButtonEnabled=_items.where((x)=>!x.isDrawn).toList().length>0?true:false;
                 });
             }
-
 }
 
 
@@ -107,6 +105,11 @@ class _InputWordsState extends State<InputWords>{
   List<TextItem> get messages =>_messages;
   final inputController = new TextEditingController();
 
+  void removeItem(String text){
+    setState((){
+      _messages.removeWhere((item)=>item.text==text);
+    }); 
+  }
   @override
   void dispose() {
     // Clean up the controller when the Widget is disposed
@@ -174,9 +177,42 @@ class _InputWordsState extends State<InputWords>{
       );
     
       setState((){
-        _messages.insert(0, item);
+        _messages.add(item);
       });
     }
 }
 
 }
+
+class TextItem extends StatelessWidget{
+  
+  TextItem({this.text,this.isDrawn});
+  final String text;
+  bool isDrawn;
+  
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      margin: new EdgeInsets.symmetric(vertical:10.0),
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+           new Text(text,
+            style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),
+        ), 
+        new Container(
+          child:new IconButton(
+              icon: new Icon(Icons.delete),
+              iconSize: 36.0,
+              color: Colors.redAccent,
+              onPressed: () => _removeItem(text)),
+        ),
+        ],
+      ),
+      );
+  }
+  
+  void _removeItem(String text){
+      key.currentState.removeItem(text);
+  }
+} 
