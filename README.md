@@ -1,6 +1,6 @@
 # random_draw
 
-A new Flutter project.
+This app helps people to generate random sequences from a list of inputs. Every output is generated only once from input list. This app can be used to perform actions based on the output like any game or activity for a group.
 
 ## Getting Started
 Clone the repository to your local system or download the zip file
