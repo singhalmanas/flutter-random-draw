@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Welcome to Flutter',
+      title: 'Draw Random Items',
       home: new DefaultTabController(
         length: 2,
         child: new Scaffold(
@@ -36,13 +36,15 @@ class MyApp extends StatelessWidget {
 }
 
 class DrawRandom extends StatefulWidget{
-  
+  DrawRandom(){
+  }
   _DrawRandomState createState()=>new _DrawRandomState();
  }
 
   class _DrawRandomState extends State<DrawRandom>{
 
   String _drawnString="";
+  bool isButtonEnabled=true;
     @override
     Widget build(BuildContext context) {
       return new Scaffold(
@@ -58,7 +60,7 @@ class DrawRandom extends StatefulWidget{
         ),
         ),
         floatingActionButton: new FloatingActionButton(
-          onPressed: () =>_drawRandom(),
+          onPressed: !isButtonEnabled?null: () =>_drawRandom(),
                     tooltip:'Draw',
                     child:new Icon(Icons.center_focus_strong),
                   ),
@@ -85,9 +87,9 @@ class DrawRandom extends StatefulWidget{
                 _items[index]=_item;
                 setState((){
                     _drawnString=_item.text;
+                    isButtonEnabled=_items.where((x)=>!x.isDrawn).toList().length>0?true:false;
                 });
             }
-
 }
 
 
@@ -103,6 +105,11 @@ class _InputWordsState extends State<InputWords>{
   List<TextItem> get messages =>_messages;
   final inputController = new TextEditingController();
 
+  void removeItem(String text){
+    setState((){
+      _messages.removeWhere((item)=>item.text==text);
+    }); 
+  }
   @override
   void dispose() {
     // Clean up the controller when the Widget is disposed
@@ -119,6 +126,7 @@ class _InputWordsState extends State<InputWords>{
               padding:new EdgeInsets.all(8.0),
               itemBuilder: (_,int index)=>_messages[index],
               itemCount:_messages.length,
+              //onTap: ()=>   FocusScope.of(context).requestFocus(new FocusNode()),
             ),
           ),
           new Divider(height:1.0),
@@ -145,7 +153,7 @@ class _InputWordsState extends State<InputWords>{
               controller: inputController,
               onSubmitted: _handleSubmitted,
               decoration: new InputDecoration.collapsed(
-                hintText: "Send a message"),
+                hintText: "Input Item in List"),
             ),
           ),
           new Container(
@@ -162,14 +170,16 @@ class _InputWordsState extends State<InputWords>{
 
   void _handleSubmitted(String text) {
     inputController.clear();
+    if(text!=null || text!=""){
     TextItem item=new TextItem(
-      text:text,
-      isDrawn:false
+        text:text,
+        isDrawn:false
       );
     
-    setState((){
-      _messages.insert(0, item);
-    });
+      setState((){
+        _messages.add(item);
+      });
+    }
 }
 
 }
@@ -184,10 +194,25 @@ class TextItem extends StatelessWidget{
   Widget build(BuildContext context) {
     return new Container(
       margin: new EdgeInsets.symmetric(vertical:10.0),
-      child: new Text(text,
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+           new Text(text,
             style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),
+        ), 
+        new Container(
+          child:new IconButton(
+              icon: new Icon(Icons.delete),
+              iconSize: 36.0,
+              color: Colors.redAccent,
+              onPressed: () => _removeItem(text)),
         ),
+        ],
+      ),
       );
   }
   
+  void _removeItem(String text){
+      key.currentState.removeItem(text);
+  }
 } 
