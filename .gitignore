@@ -6,9 +6,9 @@
 .packages
 .pub/
 build/
-ios/
 .generated/
 packages
 .flutter-plugins
-android/
 pubspec.lock
+android/key.jks
+android/key.properties
