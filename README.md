@@ -1,6 +1,10 @@
 # random_draw
 
-A new Flutter project.
+This app helps people to generate random sequences from a list of inputs. Every output is generated only once from input list. This app can be used to perform actions based on the output like any game or activity for a group.
+
+The app is now live on google play store. It can be found with name "Random Generator From List". Here is the url:
+https://play.google.com/store/apps/details?id=com.codebizlabs.randomdraw&rdid=com.codebizlabs.randomdraw
+Give it a try!
 
 ## Getting Started
 Clone the repository to your local system or download the zip file
